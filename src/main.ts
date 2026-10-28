@@ -130,3 +130,9 @@ document.querySelector<HTMLButtonElement>('#copy')!
       status.textContent = 'Clipboard access failed.'
     }
   })
+
+import { setupCertificateUI } from './certificate-ui'
+setupCertificateUI()
+
+import { setupOnboardingUI } from './onboarding'
+setupOnboardingUI()
