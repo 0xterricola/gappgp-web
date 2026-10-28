@@ -1,0 +1,25 @@
+{
+  "name": "gappgp-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.6",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.5",
+    "vite-plugin-node-polyfills": "^0.28.0"
+  },
+  "dependencies": {
+    "@ngraveio/bc-ur": "^1.1.13",
+    "buffer": "^6.0.3",
+    "cbor2": "^2.3.0",
+    "jsqr": "^1.4.0",
+    "openpgp": "^6.3.2",
+    "qrcode": "^1.5.4"
+  }
+}
