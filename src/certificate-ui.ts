@@ -147,7 +147,9 @@ export function setupCertificateUI() {
         'complete'
       )
     }
-    document.dispatchEvent(new Event(`gappgp:${source}-verified`))
+    document.dispatchEvent(new CustomEvent(`gappgp:${source}-verified`, {
+      detail: info,
+    }))
   }
 
   function stopCamera() {

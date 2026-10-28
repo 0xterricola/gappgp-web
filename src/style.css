@@ -455,3 +455,91 @@ main {
   margin-bottom: 0;
   color: #d4c5a9;
 }
+
+#sign-challenge {
+  margin-top: 20px;
+}
+
+#sign-request {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #303036;
+}
+
+#sign-qr {
+  display: block;
+  max-width: 100%;
+  margin: 24px auto;
+  background: white;
+  border-radius: 8px;
+}
+
+#sign-fingerprint {
+  overflow-wrap: anywhere;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+#sign-generate:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Match the reference CLI's crisp QR rendering. */
+#sign-qr-rendering,
+#sign-qr {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  image-rendering: pixelated;
+}
+
+#sign-response {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #303036;
+}
+
+#signature-video {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  border-radius: 8px;
+}
+
+#signature-scanner-status {
+  padding: 14px;
+  border: 1px solid #52525b;
+  border-radius: 10px;
+  background: #18181b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#signature-scanner-status[data-state="complete"],
+#signature-success {
+  border-color: #22c55e;
+  background: #17241b;
+  color: #4ade80;
+}
+
+#signature-scanner-status[data-state="error"] {
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+#signature-success {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #22c55e;
+  border-radius: 12px;
+}
+
+#signature-success h3 {
+  color: #4ade80;
+}
+
+#signature-success p {
+  color: #d4d4d8;
+  font-size: 13px;
+}

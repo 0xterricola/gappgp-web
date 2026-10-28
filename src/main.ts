@@ -141,3 +141,9 @@ import { setupOnboardingUI } from './onboarding'
 import { setupProgressUI } from './progress'
 setupOnboardingUI()
 setupProgressUI()
+
+import { setupSignChallengeUI } from './sign-challenge'
+setupSignChallengeUI()
+
+import { setupSignResponseUI } from './sign-response'
+setupSignResponseUI()

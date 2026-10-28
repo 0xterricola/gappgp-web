@@ -4,7 +4,7 @@
 
 GapPGP Web is an experimental, browser-based companion for [Keycard Shell](https://github.com/keycard-tech/keycard-shell).
 
-It helps users create OpenPGP identities, exchange QR requests and responses with their hardware device, and inspect, validate, and export public certificates.
+It helps users create OpenPGP identities, exchange QR requests and responses with Keycard Shell, manage public certificates, and cryptographically verify signing-key possession.
 
 No account, backend, or private-key import is required. Private signing-key operations remain on Keycard Shell.
 
@@ -25,7 +25,7 @@ Your public certificate can be shared freely. Your private key should never be s
 
 A valid certificate does not independently prove ownership of the name or email address it contains.
 
-GapPGP Web currently focuses on identity setup and certificate management, not encryption.
+GapPGP Web focuses on identity setup, certificate management, and signing-key possession verification. General-purpose message signing and encryption are not yet implemented.
 
 ## Features
 
@@ -40,12 +40,12 @@ GapPGP Web currently focuses on identity setup and certificate management, not e
 | OpenPGP certificate validation | Experimental |
 | Display identity and fingerprint | Available |
 | Export public certificates (.asc) | Available |
-| Hardware key-possession verification | Planned |
+| Hardware key-possession verification | Experimental — hardware-tested |
 | Message and document signing | Planned |
 | Native Thunderbird integration | Separate project |
 | Encryption | Not implemented |
 
-Hardware certificate round trips and cryptographic validation still require further end-to-end testing.
+Identity creation, certificate validation, and signing-key possession verification have been tested using a physical Keycard Shell. Additional security and interoperability testing remains necessary.
 
 ## Getting Started
 
@@ -117,7 +117,36 @@ The current validator expects a public certificate containing one User ID.
 
 Validation does not independently establish hardware origin, current possession of the corresponding private key, or email ownership.
 
-### 5. Use your certificate
+### 5. Verify control of your signing key
+
+GapPGP Web supports experimental cryptographic proof-of-possession verification using Keycard Shell.
+
+1. Open **Certificate Tools**.
+2. Upload and validate your OpenPGP public certificate.
+3. Select **Generate Signing Challenge**.
+4. Scan the signing request QR with Keycard Shell.
+5. Review and approve the signing operation on the device.
+6. Scan the signature response QR with GapPGP Web, or paste its UR:BYTES response.
+7. Wait for cryptographic verification.
+
+GapPGP Web generates a random challenge and constructs a `SIGN_MESSAGE` request using CBOR and UR:BYTES.
+
+Keycard Shell signs the challenge with its private signing key and returns a detached OpenPGP signature.
+
+The browser verifies:
+
+- The exact challenge generated for the current session
+- The selected OpenPGP public certificate
+- The expected signing timestamp
+- The supported signature algorithm and packet format
+
+Successful verification displays **Signing key possession verified** and the certificate fingerprint.
+
+This demonstrates control of the corresponding private signing key at signing time. It does not independently establish hardware origin, real-world identity, or email ownership.
+
+The workflow has passed a physical Keycard Shell integration test. Additional replay-protection and negative testing remains pending.
+
+### 6. Use your certificate
 
 You can share your public certificate with others so they can verify signatures associated with your key.
 
@@ -156,7 +185,34 @@ GapPGP Web
 Export Public Certificate (.asc)
 ```
 
-The browser prepares requests and processes public certificate data.
+The signing-key verification workflow uses a separate request and response exchange:
+
+```text
+GapPGP Web
+    |
+    | Random signing challenge
+    | SIGN_MESSAGE request
+    | CBOR -> UR:BYTES -> QR
+    v
+Keycard Shell
+    |
+    | Device review and approval
+    | Private-key signing
+    v
+Detached OpenPGP Signature
+    |
+    | UR:BYTES response QR
+    v
+GapPGP Web
+    |
+    | Decode signature
+    | Verify challenge and timestamp
+    | Verify against public certificate
+    v
+Signing Key Possession Verified
+```
+
+The browser prepares requests, processes public certificates, and verifies returned OpenPGP signatures.
 
 Keycard Shell performs private-key operations.
 
@@ -205,6 +261,8 @@ Production assets are generated in `dist/`.
 | `src/certificate.ts` | OpenPGP certificate validation |
 | `src/certificate-ui.ts` | QR scanning, uploads, and certificate export |
 | `src/onboarding.ts` | Guided interface and educational content |
+| `src/sign-challenge.ts` | Signing challenge generation and QR encoding |
+| `src/sign-response.ts` | Detached signature decoding and cryptographic verification |
 | `src/style.css` | Interface styling |
 | `vite.config.ts` | Build and browser compatibility configuration |
 | `.github/workflows/deploy.yml` | GitHub Pages deployment |
@@ -217,20 +275,23 @@ GapPGP Web follows a browser-local architecture.
 - No server-side private-key operations.
 - No private-key upload required.
 - Hardware-backed signing keys remain on Keycard Shell.
-- Certificate parsing and verification run in the browser.
+- Certificate parsing and signature verification run in the browser.
+- Signing challenges use cryptographically random values.
+- Detached signatures are verified against the active challenge and selected public certificate.
+- Private signing keys are not transferred to the browser.
 - Public certificates may be freely exported and shared.
 
 ### Important limitations
 
 GapPGP Web is experimental software and has not undergone an independent security audit.
 
-Certificate validation does not prove real-world identity, email ownership, or current control of a private key.
+Certificate validation alone does not prove real-world identity, email ownership, or current control of a private key. The separate signing-challenge workflow can demonstrate key possession at signing time.
 
-A hardware signing challenge is required to demonstrate possession of the corresponding private key. That functionality is planned.
+Signing challenges and cryptographic proof-of-possession verification are experimentally implemented and hardware-tested. Signature verification does not independently attest that a specific hardware device performed the operation.
 
 QR scanning depends on browser camera support.
 
-The complete identity-creation workflow still requires validation against hardware-generated certificates, including malformed and tampered inputs.
+Identity creation has been tested using Keycard Shell, and a tampered certificate fixture has been rejected. Broader malformed-input, stale-signature, replay, and certificate-mismatch testing remains necessary.
 
 Do not upload private or secret-key files.
 
@@ -252,12 +313,12 @@ Commits pushed to `main` automatically trigger the GitHub Actions deployment wor
 
 The next development milestones include:
 
-1. Test complete Keycard Shell identity-creation round trips.
-2. Verify valid and tampered public certificates.
-3. Improve multi-frame UR response handling.
-4. Add hardware-backed signing challenges and verification.
-5. Support message and document signing workflows.
-6. Expand interoperability with additional OpenPGP applications.
+1. Expand automated regression tests for identity creation and signing verification.
+2. Test replay protection, stale signatures, mismatched certificates, and malformed responses.
+3. Improve multi-frame UR response handling and camera scanning.
+4. Support general-purpose message and document signing workflows.
+5. Expand interoperability with additional OpenPGP applications.
+6. Strengthen security testing and prepare for independent review.
 
 ## About GapPGP
 
