@@ -60,6 +60,7 @@ export function setupCertificateUI() {
 
   let decoder = new URDecoder()
   let current: CertificateInfo | null = null
+  let currentSource: 'response' | 'upload' | null = null
   let stream: MediaStream | null = null
   let frameID = 0
   let busy = false
@@ -69,8 +70,9 @@ export function setupCertificateUI() {
       ? error.message : String(error)
   }
 
-  function display(info: CertificateInfo) {
+  function display(info: CertificateInfo, source: 'response' | 'upload') {
     current = info
+    currentSource = source
     $('certificate-identity').textContent = info.userID
     $('certificate-fingerprint').textContent = info.fingerprint
     $('certificate-created').textContent =
@@ -78,6 +80,7 @@ export function setupCertificateUI() {
 
     result.hidden = false
     status.textContent = 'Public certificate validated successfully.'
+    document.dispatchEvent(new Event(`gappgp:${source}-verified`))
   }
 
   function stopCamera() {
@@ -124,7 +127,7 @@ export function setupCertificateUI() {
         : undefined
 
       const info = await validateCertificate(bytes, expectedUID)
-      display(info)
+      display(info, 'response')
       decoder = new URDecoder()
       stopCamera()
       return
@@ -146,6 +149,8 @@ export function setupCertificateUI() {
     .addEventListener('change', async event => {
       result.hidden = true
       current = null
+      currentSource = null
+      document.dispatchEvent(new Event('gappgp:upload-started'))
 
       try {
         const input = event.target as HTMLInputElement
@@ -164,8 +169,9 @@ export function setupCertificateUI() {
           ? new TextDecoder().decode(bytes)
           : bytes
 
-        display(await validateCertificate(source))
+        display(await validateCertificate(source), 'upload')
       } catch (error) {
+        document.dispatchEvent(new Event('gappgp:upload-failed'))
         showError(error)
       }
     })
@@ -183,6 +189,9 @@ export function setupCertificateUI() {
     link.download =
       `gappgp-${current.fingerprint.slice(-16)}.asc`
     link.click()
+    document.dispatchEvent(new CustomEvent('gappgp:download-started', {
+      detail: { source: currentSource },
+    }))
 
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   })
@@ -241,6 +250,17 @@ export function setupCertificateUI() {
     } catch (error) {
       stopCamera()
       showError(error)
+    }
+  })
+
+  document.addEventListener('gappgp:request-reset', () => {
+    stopCamera()
+    decoder = new URDecoder()
+    responseText.value = ''
+    if (currentSource === 'response') {
+      current = null
+      currentSource = null
+      result.hidden = true
     }
   })
 

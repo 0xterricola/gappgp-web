@@ -57,6 +57,8 @@ document.querySelector<HTMLButtonElement>('#create')!
   .addEventListener('click', async () => {
     try {
       result.hidden = true
+      currentUR = ''
+      document.dispatchEvent(new Event('gappgp:request-reset'))
       status.textContent = ''
 
       const name = nameInput.value.trim()
@@ -114,6 +116,7 @@ document.querySelector<HTMLButtonElement>('#create')!
       identity.textContent = uid
       result.hidden = false
       status.textContent = 'Identity request ready.'
+      document.dispatchEvent(new Event('gappgp:request-ready'))
     } catch (error) {
       status.textContent =
         error instanceof Error ? error.message : String(error)
@@ -135,4 +138,6 @@ import { setupCertificateUI } from './certificate-ui'
 setupCertificateUI()
 
 import { setupOnboardingUI } from './onboarding'
+import { setupProgressUI } from './progress'
 setupOnboardingUI()
+setupProgressUI()
