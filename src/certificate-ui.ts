@@ -36,26 +36,27 @@ export function setupCertificateUI() {
     </section>
 
     <section id="certificate-result" hidden>
-      <h2>Certificate verified</h2>
+      <h2>Public certificate checks passed</h2>
       <p id="certificate-identity"></p>
       <p><strong>Fingerprint</strong></p>
       <p id="certificate-fingerprint"></p>
       <p id="certificate-created"></p>
 
       <div class="certificate-guide">
-        <h3>What is your public certificate?</h3>
+        <h3>What is an OpenPGP public certificate?</h3>
         <p>
-          Think of it as your shareable cryptographic identity.
-          It contains your <strong>public key</strong> and
-          identity information, including your name and email.
+          This shareable file contains your
+          <strong>public key</strong>, your claimed identity
+          (User ID), and a self-certification signature
+          binding that identity to the key.
         </p>
         <p>
-          Other people use this certificate to verify
-          digital signatures made with your corresponding
-          private key.
+          Others use the public key in this certificate
+          to verify signatures made with the corresponding
+          private signing key.
         </p>
 
-        <h3>Why should you save it?</h3>
+        <h3>Why should you download it?</h3>
         <p>
           Download your certificate as an <code>.asc</code>
           file and keep it somewhere you can easily find.
@@ -139,7 +140,7 @@ export function setupCertificateUI() {
       `Created: ${info.created}`
 
     result.hidden = false
-    status.textContent = 'Public certificate validated successfully.'
+    status.textContent = 'Public certificate integrity checks passed.'
     if (source === 'response') {
       showScanner(
         '✓ Certificate verified. Scanning complete — you can lower your Keycard.',

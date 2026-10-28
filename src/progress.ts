@@ -16,7 +16,7 @@ export function setupProgressUI() {
   const stages = [
     ['Identity details', 'Enter a valid name and email'],
     ['Identity request', 'Generate the QR request'],
-    ['Certificate verified', 'Receive and validate the Keycard response'],
+    ['Public certificate checked', 'Validate the certificate returned by Keycard Shell'],
     ['Public certificate export', 'Download the validated certificate'],
   ]
 
@@ -98,7 +98,7 @@ export function setupProgressUI() {
         'Next: scan the QR with Keycard Shell, approve on the device, then scan its response.'
     } else if (!downloadStarted) {
       next.textContent =
-        'Certificate verified. Next: download your public certificate.'
+        'Certificate checks passed. Next: download your public certificate (.asc).'
     } else {
       next.textContent =
         'Download started. Your public certificate is ready to share.'

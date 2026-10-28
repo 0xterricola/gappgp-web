@@ -43,10 +43,10 @@ export function setupOnboardingUI() {
         the hardware through QR codes.
       </p>
       <div class="security-note">
-        <strong>Public certificate</strong>
-        <span>Share it so others can verify your signatures.</span>
-        <strong>Private key</strong>
-        <span>Keep it on your Keycard Shell.</span>
+        <strong>OpenPGP public certificate</strong>
+        <span>Contains your public key and claimed identity. Share it so others can verify your signatures.</span>
+        <strong>Private signing key</strong>
+        <span>Used to create signatures. Protected by Keycard Shell.</span>
       </div>
       <p class="important-note">
         A certificate does not independently prove that
