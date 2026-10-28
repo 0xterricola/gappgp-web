@@ -83,6 +83,8 @@ export function setupOnboardingUI() {
       <strong>Why?</strong> Your public certificate allows
       other people and applications to verify signatures
       made with your corresponding private key.
+      After verification, download and save your public
+      certificate (.asc) so you can share it later.
     </p>
   `)
 

@@ -416,3 +416,42 @@ main {
   border-color: #ef4444;
   color: #fca5a5;
 }
+
+.certificate-guide {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #303036;
+}
+
+.certificate-guide h3 {
+  margin: 28px 0 8px;
+  font-size: 16px;
+  color: #f4f4f5;
+}
+
+.certificate-guide p {
+  margin: 8px 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.certificate-guide strong {
+  color: #f4f4f5;
+}
+
+.certificate-warning {
+  margin-top: 24px;
+  padding: 18px;
+  border: 1px solid #725c32;
+  border-radius: 10px;
+  background: #272116;
+}
+
+.certificate-warning strong {
+  color: #fcd34d;
+}
+
+.certificate-warning p {
+  margin-bottom: 0;
+  color: #d4c5a9;
+}
