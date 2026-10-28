@@ -389,3 +389,30 @@ main {
     gap: 18px;
   }
 }
+
+#scanner-feedback {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #52525b;
+  border-radius: 10px;
+  background: #18181b;
+  color: #d4d4d8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#scanner-feedback[data-state="reading"] {
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+#scanner-feedback[data-state="complete"] {
+  border-color: #22c55e;
+  background: #17241b;
+  color: #4ade80;
+}
+
+#scanner-feedback[data-state="error"] {
+  border-color: #ef4444;
+  color: #fca5a5;
+}

@@ -58,6 +58,19 @@ export function setupCertificateUI() {
   const video = $<HTMLVideoElement>('scan-video')
   const responseText = $<HTMLTextAreaElement>('response-ur')
 
+  const scannerFeedback = document.createElement('div')
+  scannerFeedback.id = 'scanner-feedback'
+  scannerFeedback.setAttribute('role', 'status')
+  scannerFeedback.setAttribute('aria-live', 'polite')
+  video.insertAdjacentElement('afterend', scannerFeedback)
+
+  const uniqueFrames = new Set<string>()
+
+  function showScanner(message: string, state = 'waiting') {
+    scannerFeedback.textContent = message
+    scannerFeedback.dataset.state = state
+  }
+
   let decoder = new URDecoder()
   let current: CertificateInfo | null = null
   let currentSource: 'response' | 'upload' | null = null
@@ -80,6 +93,12 @@ export function setupCertificateUI() {
 
     result.hidden = false
     status.textContent = 'Public certificate validated successfully.'
+    if (source === 'response') {
+      showScanner(
+        '✓ Certificate verified. Scanning complete — you can lower your Keycard.',
+        'complete'
+      )
+    }
     document.dispatchEvent(new Event(`gappgp:${source}-verified`))
   }
 
@@ -102,10 +121,17 @@ export function setupCertificateUI() {
         throw new Error('Expected UR:BYTES response.')
       }
 
+      uniqueFrames.add(part)
       decoder.receivePart(part)
 
       if (!decoder.isComplete()) {
-        status.textContent = 'Response frame received. Continue scanning.'
+        if (stream) {
+          showScanner(
+            `QR detected · ${uniqueFrames.size} distinct frame(s) captured. Keep scanning.`,
+            'reading'
+          )
+        }
+        status.textContent = 'Receiving certificate response.'
         continue
       }
 
@@ -220,7 +246,14 @@ export function setupCertificateUI() {
             await receiveUR(qr.data)
           } catch (error) {
             decoder = new URDecoder()
+            uniqueFrames.clear()
             showError(error)
+            showScanner(
+              `QR detected, but validation failed: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+              'error'
+            )
           } finally {
             busy = false
           }
@@ -237,6 +270,8 @@ export function setupCertificateUI() {
     try {
       stopCamera()
       decoder = new URDecoder()
+      uniqueFrames.clear()
+      showScanner('Requesting camera access…')
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
         audio: false,
@@ -245,7 +280,11 @@ export function setupCertificateUI() {
       video.srcObject = stream
       video.hidden = false
       await video.play()
-      status.textContent = 'Point camera at Keycard Shell QR.'
+      status.textContent = 'Camera ready.'
+      showScanner(
+        'Camera ready · No QR detected yet. Hold the Keycard QR steadily in view.',
+        'waiting'
+      )
       frameID = requestAnimationFrame(scanFrame)
     } catch (error) {
       stopCamera()
