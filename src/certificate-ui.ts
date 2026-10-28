@@ -41,6 +41,53 @@ export function setupCertificateUI() {
       <p><strong>Fingerprint</strong></p>
       <p id="certificate-fingerprint"></p>
       <p id="certificate-created"></p>
+
+      <div class="certificate-guide">
+        <h3>What is your public certificate?</h3>
+        <p>
+          Think of it as your shareable cryptographic identity.
+          It contains your <strong>public key</strong> and
+          identity information, including your name and email.
+        </p>
+        <p>
+          Other people use this certificate to verify
+          digital signatures made with your corresponding
+          private key.
+        </p>
+
+        <h3>Why should you save it?</h3>
+        <p>
+          Download your certificate as an <code>.asc</code>
+          file and keep it somewhere you can easily find.
+        </p>
+        <p>
+          You can share this file with others or import it
+          into compatible OpenPGP applications such as
+          GnuPG and Thunderbird.
+        </p>
+
+        <h3>Is it safe to share?</h3>
+        <p>
+          <strong>Yes.</strong> This is your public certificate.
+          It does not contain your private signing key and
+          cannot be used to create signatures as you.
+        </p>
+        <p>
+          Remember that your name and email address are
+          visible to anyone you share it with.
+        </p>
+
+        <div class="certificate-warning">
+          <strong>Important: This is not a private-key backup.</strong>
+          <p>
+            Your private signing key remains on Keycard Shell.
+            Saving this public certificate does not allow you
+            to recover a lost private key or sign without
+            your hardware.
+          </p>
+        </div>
+      </div>
+
       <button id="download-certificate">
         Download public certificate (.asc)
       </button>
